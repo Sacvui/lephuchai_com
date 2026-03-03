@@ -31,10 +31,10 @@ export default async function BooksPage({
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
 
-    const { posts, total } = await sanityFetch<{ posts: any[]; total: number }>({
+    const { posts = [], total = 0 } = await sanityFetch<{ posts: any[]; total: number }>({
         query: BOOK_POSTS_QUERY,
         params: { start, end },
-    });
+    }).catch(() => ({ posts: [], total: 0 }));
 
     const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -144,7 +144,7 @@ export default async function BooksPage({
             {/* Chapter List / Drafts */}
             <h3 className="text-2xl font-bold mb-8 pl-4 border-l-4 border-amber-500">Drafts & Chapters</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {posts.map((post) => (
+                {posts?.map((post) => (
                     <Link key={post._id} href={`/blog/${post.slug.current}`} className="group">
                         <article className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-800 h-full flex flex-col">
                             <div className="relative h-48 bg-slate-100 dark:bg-slate-800">
@@ -175,3 +175,4 @@ export default async function BooksPage({
         </div>
     );
 }
+
